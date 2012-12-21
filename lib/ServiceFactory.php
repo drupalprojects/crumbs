@@ -25,4 +25,12 @@ class crumbs_ServiceFactory {
     }
     return new crumbs_PluginEngine($plugins, $weights);
   }
+
+  /**
+   * A service that knows about all available plugins, but not about their
+   * configuration / weights.
+   */
+  function pluginLibrary($cache) {
+    return new crumbs_PluginLibrary();
+  }
 }

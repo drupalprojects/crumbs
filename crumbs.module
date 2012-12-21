@@ -357,51 +357,11 @@ function crumbs_get_plugin_engine() {
  *   - An array of disabled plugin keys.
  */
 function crumbs_get_plugins() {
-  static $plugins, $disabled_keys;
-
-  if (!isset($plugins)) {
-    $modules = array(
-      'blog',
-      'comment',
-      'crumbs',
-      'entityreference',
-      'menu',
-      'path',
-      'taxonomy',
-      'forum',
-    );
-
-    // Include Crumbs-provided plugins.
-    foreach ($modules as $module) {
-      if (module_exists($module)) {
-        module_load_include('inc', 'crumbs', 'plugins/crumbs.'. $module);
-      }
-    }
-
-    // Organic groups is a special case,
-    // because 7.x-2.x behaves different from 7.x-1.x.
-    if (module_exists('og')) {
-      if (function_exists('og_get_group')) {
-        // We are using the og-7.x-1.x branch.
-        module_load_include('inc', 'crumbs', 'plugins/crumbs.og');
-      }
-      else {
-        // We are using the og-7.x-2.x branch.
-        module_load_include('inc', 'crumbs', 'plugins/crumbs.og.2');
-      }
-    }
-
-    $plugins = array();
-    $disabled_keys = array();
-    $api = new crumbs_InjectedAPI_hookCrumbsPlugins($plugins, $disabled_keys);
-    foreach (module_implements('crumbs_plugins') as $module) {
-      $function = $module .'_crumbs_plugins';
-      $api->setModule($module);
-      $function($api);
-    }
-  }
-
-  return array($plugins, $disabled_keys);
+  $lib = crumbs('pluginLibrary');
+  return array(
+    $lib->getAvailablePlugins(),
+    $lib->getDisabledByDefaultKeys(),
+  );
 }
 
 /**
