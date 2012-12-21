@@ -298,9 +298,7 @@ function crumbs_get_trail($path = NULL) {
  * @see crumbs_BreadcrumbBuilder
  */
 function crumbs_build_breadcrumb(array $trail) {
-  $plugin_engine = crumbs_get_plugin_engine();
-  $breadcrumb_builder = new crumbs_BreadcrumbBuilder($plugin_engine);
-  return $breadcrumb_builder->buildBreadcrumb($trail);
+  return crumbs('breadcrumbBuilder')->buildBreadcrumb($trail);
 }
 
 /**
@@ -310,14 +308,7 @@ function crumbs_build_breadcrumb(array $trail) {
  *   An instance of crumbs_TrailFinder.
  */
 function crumbs_get_trail_finder() {
-  static $trail_finder;
-
-  if (!isset($trail_finder)) {
-    $parent_finder = crumbs_get_parent_finder();
-    $trail_finder = new crumbs_TrailFinder($parent_finder);
-  }
-
-  return $trail_finder;
+  return crumbs('trailFinder');
 }
 
 /**
@@ -327,14 +318,25 @@ function crumbs_get_trail_finder() {
  *   An instance of crumbs_ParentFinder.
  */
 function crumbs_get_parent_finder() {
-  static $parent_finder;
+  return crumbs('parentFinder');
+}
 
-  if (!isset($parent_finder)) {
-    $plugin_engine = crumbs_get_plugin_engine();
-    $parent_finder = new crumbs_ParentFinder($plugin_engine);
+/**
+ * Get the service with the given key.
+ * If it does not exist, it will be lazy-created with all its dependencies.
+ */
+function crumbs($key = NULL) {
+  static $cache = NULL;
+  if (!isset($cache)) {
+    $factory = new crumbs_ServiceFactory();
+    $cache = new crumbs_ServiceCache($factory);
   }
-
-  return $parent_finder;
+  if (isset($key)) {
+    return $cache->__get($key);
+  }
+  else {
+    return $cache;
+  }
 }
 
 /**
@@ -344,20 +346,7 @@ function crumbs_get_parent_finder() {
  *   An instance of crumbs_PluginEngine.
  */
 function crumbs_get_plugin_engine() {
-  static $plugin_engine;
-
-  if (!isset($plugin_engine)) {
-    list($plugins, $disabled_keys) = crumbs_get_plugins();
-    $weights = crumbs_get_weights();
-    foreach ($disabled_keys as $key => $disabled) {
-      if (!isset($weights[$key])) {
-        $weights[$key] = FALSE;
-      }
-    }
-    $plugin_engine = new crumbs_PluginEngine($plugins, $weights);
-  }
-
-  return $plugin_engine;
+  return crumbs('pluginEngine');
 }
 
 /**
