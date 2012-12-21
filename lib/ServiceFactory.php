@@ -3,14 +3,23 @@
 
 class crumbs_ServiceFactory {
 
+  /**
+   * A service that can build a breadcrumb from a trail.
+   */
   function breadcrumbBuilder($cache) {
     return new crumbs_BreadcrumbBuilder($cache->pluginEngine);
   }
 
+  /**
+   * A service that can build a trail for a given path.
+   */
   function trailFinder($cache) {
     return new crumbs_TrailFinder($cache->parentFinder);
   }
 
+  /**
+   * A service that attempts to find a parent path for a given path.
+   */
   function parentFinder($cache) {
     return new crumbs_ParentFinder($cache->pluginEngine);
   }
