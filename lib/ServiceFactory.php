@@ -15,8 +15,13 @@ class crumbs_ServiceFactory {
     return new crumbs_ParentFinder($cache->pluginEngine);
   }
 
+  /**
+   * A service that knows all plugins and their configuration/weights,
+   * and can run plugin operations on those plugins.
+   */
   function pluginEngine($cache) {
-    list($plugins, $disabled_keys) = crumbs_get_plugins();
+    $plugins = $cache->pluginLibrary->getAvailablePlugins();
+    $disabled_keys = $cache->pluginLibrary->getDisabledByDefaultKeys();
     $weights = crumbs_get_weights();
     foreach ($disabled_keys as $key => $disabled) {
       if (!isset($weights[$key])) {
@@ -27,8 +32,8 @@ class crumbs_ServiceFactory {
   }
 
   /**
-   * A service that knows about all available plugins, but not about their
-   * configuration / weights.
+   * A service that knows about all available plugins and their default
+   * settings, but not about their runtime configuration / weights.
    */
   function pluginLibrary($cache) {
     return new crumbs_PluginLibrary();
