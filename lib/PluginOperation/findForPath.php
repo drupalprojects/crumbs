@@ -1,7 +1,7 @@
 <?php
 
 
-abstract class crumbs_PluginOperation_findForPath implements crumbs_PluginOperationInterface_find {
+abstract class crumbs_PluginOperation_findForPath implements crumbs_PluginOperation_Interface_find {
 
   // injected constructor parameters
   protected $path;

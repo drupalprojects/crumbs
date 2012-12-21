@@ -48,7 +48,7 @@ class crumbs_PluginEngine {
    *   an object that does the method call, and can maintain a state between
    *   different plugins' method calls.
    */
-  function invokeAll_find(crumbs_PluginOperationInterface_find $plugin_operation) {
+  function invokeAll_find(crumbs_PluginOperation_Interface_find $plugin_operation) {
     foreach ($this->pluginOrder_find as $plugin_key => $plugin) {
       $weight_keeper = $this->weightKeeper->prefixedWeightKeeper($plugin_key);
       $found = $plugin_operation->invoke($plugin, $plugin_key, $weight_keeper);
@@ -63,7 +63,7 @@ class crumbs_PluginEngine {
    * These need to be called with the lowest priority first,
    * because later calls will overwrite earlier calls.
    */
-  function invokeAll_alter(crumbs_PluginOperationInterface_alter $plugin_operation) {
+  function invokeAll_alter(crumbs_PluginOperation_Interface_alter $plugin_operation) {
     foreach ($this->pluginOrder_alter as $plugin_key => $plugin) {
       $plugin_operation->invoke($plugin, $plugin_key);
     }

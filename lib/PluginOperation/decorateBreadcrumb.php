@@ -1,7 +1,7 @@
 <?php
 
 
-class crumbs_PluginOperation_decorateBreadcrumb implements crumbs_PluginOperationInterface_alter {
+class crumbs_PluginOperation_decorateBreadcrumb implements crumbs_PluginOperation_Interface_alter {
 
   protected $breadcrumb;
 
