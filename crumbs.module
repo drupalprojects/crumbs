@@ -378,13 +378,7 @@ function crumbs_get_plugins() {
  *   An array of plugin keys and their weights, sorted by weight.
  */
 function crumbs_get_weights() {
-  $weights = variable_get('crumbs_weights', array('crumbs.home_title' => 0));
-  asort($weights);
-  if (!isset($weights['*'])) {
-    $weights['*'] = count($weights);
-  }
-
-  return $weights;
+  return crumbs('ruleWeightSettings')->get();
 }
 
 /**

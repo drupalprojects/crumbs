@@ -31,12 +31,7 @@ class crumbs_ServiceFactory {
   function pluginEngine($cache) {
     $plugins = $cache->pluginLibrary->getAvailablePlugins();
     $disabled_keys = $cache->pluginLibrary->getDisabledByDefaultKeys();
-    $weights = crumbs_get_weights();
-    foreach ($disabled_keys as $key => $disabled) {
-      if (!isset($weights[$key])) {
-        $weights[$key] = FALSE;
-      }
-    }
+    $weights = $cache->ruleWeightSettings->buildWeights($disabled_keys);
     return new crumbs_PluginEngine($plugins, $weights);
   }
 
@@ -46,5 +41,9 @@ class crumbs_ServiceFactory {
    */
   function pluginLibrary($cache) {
     return new crumbs_PluginLibrary();
+  }
+
+  function ruleWeightSettings($cache) {
+    return new crumbs_Conf_RuleWeightSettings();
   }
 }
