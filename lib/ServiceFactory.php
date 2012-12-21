@@ -43,6 +43,10 @@ class crumbs_ServiceFactory {
     return new crumbs_PluginLibrary();
   }
 
+  /**
+   * Service that knows about rule weight settings in the database,
+   * but not about which plugins are actually available.
+   */
   function ruleWeightSettings($cache) {
     return new crumbs_Conf_RuleWeightSettings();
   }
