@@ -274,8 +274,7 @@ function crumbs_get_trail($path = NULL) {
   $path = drupal_get_normal_path($path);
 
   if (!isset($trails[$path])) {
-    $finder = crumbs_get_trail_finder();
-    $trails[$path] = $finder->buildTrail($path);
+    $trails[$path] = crumbs('trailFinder')->buildTrail($path);
   }
 
   return $trails[$path];
