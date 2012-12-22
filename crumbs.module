@@ -418,6 +418,14 @@ function crumbs_get_router_item($path) {
       $item['localized_options'] = array();
     }
 
+    if ($normalpath !== $item['href']) {
+      $pos = strlen($item['href']);
+      $item['variadic_suffix'] = substr($normalpath, $pos);
+    }
+    else {
+      $item['variadic_suffix'] = NULL;
+    }
+
     return $item;
   }
 }
