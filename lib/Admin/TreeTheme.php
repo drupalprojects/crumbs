@@ -23,19 +23,21 @@ EOT;
   }
 
   function tree($key, $options, $children) {
-    $class = $this->getRowClass($key, $options);
     $weight_cell = $this->weightCell($key, @$options['explicit_weight']);
     $title = @$options['title'];
     $html = <<<EOT
 <div class="row rule-info clearfix">
   <div class="cell rule-weight">$weight_cell</div>
+  <div class="cell rule-toggle-expand"></div>
   <div class="cell rule-key">$key</div>
   <div class="cell rule-title">$title</div>
 </div>
 EOT;
     if (!empty($children)) {
       $html .= '<ul class="rule-children">' . implode('', $children) . '</ul>';
+      $options['has_children'] = TRUE;
     }
+    $class = $this->getRowClass($key, $options);
     return <<<EOT
 <li class="$class">$html</li>
 EOT;
@@ -46,6 +48,14 @@ EOT;
     if (isset($options['default_weight'])) {
       $default_weight = $this->weightToString($options['default_weight']);
       $class .= ' rule-default_weight-' . $default_weight;
+    }
+    if (empty($options['has_children'])) {
+      // ..
+    } elseif ($key === '*') {
+      $class .= ' expanded';
+    }
+    else {
+      $class .= ' collapsed';
     }
     return $class;
   }

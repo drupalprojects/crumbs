@@ -37,7 +37,7 @@ class crumbs_Admin_TreeOfRules {
       $key = substr($key, 0, -2);
     }
 
-    if (FALSE !== $pos = strpos($key, '.')) {
+    if (FALSE !== $pos = strrpos($key, '.')) {
       return substr($key, 0, $pos) . '.*';
     }
     else {

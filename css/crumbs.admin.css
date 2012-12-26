@@ -11,10 +11,29 @@ div.crumbs-weights-widget li {
   float:left;
   margin-left:10px;
   color:black;
+  z-index:10;
+  position:relative;
 }
 
 .crumbs-weights-widget .cell:first-child {
   margin-left:0;
+}
+
+.crumbs-weights-widget .rule-toggle-expand {
+  width:20px;
+}
+
+.crumbs-weights-widget .rule-toggle-expand a {
+  display:block;
+  cursor:pointer;
+  text-align:center;
+  border:1px solid grey;
+  margin:1px;
+  background:#eee;
+  line-height:16px;
+  text-decoration:none;
+  border-radius:5px;
+  color:black;
 }
 
 .crumbs-weights-widget li {
@@ -29,6 +48,7 @@ div.crumbs-weights-widget li {
 
 .crumbs-weights-widget .row {
   overflow:hidden;
+  position:relative;
 }
 
 .crumbs-weights-widget .rule-info:hover:before {
@@ -40,16 +60,16 @@ div.crumbs-weights-widget li {
   padding-bottom:100px;
   background:#fe4;
   opacity:0.14;
+  z-index:-10;
 }
 
-.crumbs-weights-widget li li li.inherit > .row {
+.crumbs-weights-widget li._collapsed > .row {
   line-height:0.2em;
   opacity:0.1;
 }
 
-.crumbs-weights-widget li.expanded > ul > li.inherit > .row {
-  line-height:normal;
-  opacity:1;
+.crumbs-weights-widget li._collapsed > .row > .cell {
+  margin-bottom:-20px;
 }
 
 .crumbs-weights-widget li:hover {
@@ -77,6 +97,10 @@ div.crumbs-weights-widget li {
 
 .crumbs-weights-widget li.disabled > .bar {
   background:red;
+  border-right:2px solid grey;
+  left:0;
+  width:auto;
+  padding-left:9px;
 }
 
 .crumbs-weights-widget li.enabled > .bar {
@@ -98,4 +122,8 @@ div.crumbs-weights-widget li {
 
 .crumbs-weights-widget li.enabled > .bar .spot {
   margin-left:-7px;
+}
+
+.crumbs-weights-widget li.disabled > .bar .spot {
+  margin-right:-7px;
 }
