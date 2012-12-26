@@ -70,6 +70,10 @@ function crumbs_theme($existing, $type, $theme, $path) {
     'crumbs_breadcrumb_current_page' => array(
       'item' => NULL,
     ),
+    'crumbs_weights_widget' => array(
+      'file' => 'admin/crumbs.admin.inc',
+      'render element' => 'element',
+    ),
   );
 }
 
@@ -581,6 +585,61 @@ function crumbs_clean_token_values(&$replacements, $data = array(), $options = a
       $value = preg_replace('#[^a-z0-9/]+#', '-', strtolower($value));
     }
   }
+}
+
+function crumbs_element_info() {
+  $types['crumbs_weights_widget'] = array(
+    '#input' => TRUE,
+    '#theme' => 'crumbs_weights_widget',
+    '#pre_render' => array('_crumbs_weights_widget_pre_render'),
+    '#process' => array('_crumbs_weights_widget_process'),
+    '#value_callback' => '_crumbs_weights_widget_value_callback',
+    '#element_validate' => array('_crumbs_weights_widget_validate'),
+    '#attached' => array(
+      'css' => array(drupal_get_path('module', 'crumbs') . '/css/crumbs.admin.css'),
+      'js' => array(drupal_get_path('module', 'crumbs') . '/js/crumbs.admin.js'),
+    ),
+  );
+  return $types;
+}
+
+function _crumbs_weights_widget_pre_render($element) {
+  # dpm($element, __FUNCTION__);
+  return $element;
+}
+
+function _crumbs_weights_widget_process($element) {
+  # dpm($element, __FUNCTION__);
+  return $element;
+}
+
+function _crumbs_weights_widget_value_callback($element, $input = FALSE, $form_state = array()) {
+  # dpm($element, __FUNCTION__);
+  if ($input === FALSE) {
+    return isset($element['#default_value']) ? $element['#default_value'] : array();
+  }
+}
+
+function _crumbs_weights_widget_validate(&$element, &$form_state) {
+  # dpm($element, __FUNCTION__);
+  # dpm($form_state, __FUNCTION__ . ' $form_state');
+  // normalize weights.
+  $weights = $element['#value'];
+  asort($weights);
+  $enabled = array();
+  $disabled = array();
+  $i = 0;
+  foreach ($weights as $key => $weight) {
+    if ($weight === FALSE) {
+      $disabled[$key] = $weight;
+    }
+    elseif (is_numeric($weight)) {
+      $enabled[$key] = ++$i;
+    }
+  }
+  $weights = $disabled + $enabled;
+  // TODO: Is this the correct way to do it?
+  form_set_value($element, $weights, $form_state);
 }
 
 // ============================================ interfaces =====================
