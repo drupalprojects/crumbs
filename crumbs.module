@@ -81,15 +81,15 @@ function crumbs_theme($existing, $type, $theme, $path) {
  * Default theme implementation for theme('crumbs_breadcrumb_link').
  */
 function theme_crumbs_breadcrumb_link(array $item) {
-  $options = isset($item['link_options']) ? $item['link_options'] : array();
-  return l($item['link_title'], $item['link_path'], $options);
+  $options = isset($item['localized_options']) ? $item['localized_options'] : array();
+  return l($item['title'], $item['href'], $options);
 }
 
 /**
  * Default theme implementation for theme('crumbs_breadcrumb_current_page').
  */
 function theme_crumbs_breadcrumb_current_page(array $item) {
-  return check_plain($item['link_title']);
+  return check_plain($item['title']);
 }
 
 /**
@@ -289,9 +289,9 @@ function crumbs_get_trail($path = NULL) {
  * Builds the breadcrumb based on the provided trail.
  *
  * Each breadcrumb item is a router item taken from the trail, with
- * two additional keys set:
- * - link_title: The title of the breadcrumb item as received from a plugin.
- * - link_options: An array of options passed to l() if needed.
+ * two additional/updated keys:
+ * - title: The title of the breadcrumb item as received from a plugin.
+ * - localized_options: An array of options passed to l() if needed.
  *
  * @param $trail
  *   The trail provided by crumbs_get_trail().
@@ -467,6 +467,7 @@ function crumbs_get_router_item($path) {
     return NULL;
   }
 
+  // Some additional keys.
   if (!empty($item) && is_array($item)) {
     // 'route' is a less ambiguous name for a router path than 'path'.
     $item['route'] = $item['path'];
@@ -474,6 +475,10 @@ function crumbs_get_router_item($path) {
     $item['link_path'] = $normalpath;
     $item['alias'] = drupal_get_path_alias($normalpath);
     $item['fragments'] = explode('/', $normalpath);
+
+    if (!isset($item['localized_options'])) {
+      $item['localized_options'] = array();
+    }
 
     return $item;
   }
