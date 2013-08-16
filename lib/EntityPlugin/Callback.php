@@ -1,9 +1,9 @@
 <?php
 
-class crumbs_MonoPlugin_ParentPathCallback implements crumbs_MonoPlugin_FindParentInterface {
+class crumbs_EntityPlugin_Callback implements crumbs_EntityPlugin {
 
   /**
-   * @var callback
+   * @var callable
    */
   protected $callback;
 
@@ -18,7 +18,7 @@ class crumbs_MonoPlugin_ParentPathCallback implements crumbs_MonoPlugin_FindPare
   protected $key;
 
   /**
-   * @param callback $callback
+   * @param callable $callback
    * @param string $module
    * @param string $key
    */
@@ -28,27 +28,33 @@ class crumbs_MonoPlugin_ParentPathCallback implements crumbs_MonoPlugin_FindPare
     $this->key = $key;
   }
 
+  /**
+   * @return array
+   */
   function __sleep() {
+    // Do not serialize the callback.
     return array('module', 'key');
   }
 
   /**
    * @inheritdoc
    */
-  function describe($api) {
-    $api->titleWithLabel(t('Callback result.'), t('Parent'));
+  function describe($api, $entity_type, $keys) {
+    foreach ($keys as $key => $title) {
+      $api->addRule($key, $title);
+    }
   }
 
   /**
    * @inheritdoc
    */
-  function findParent($path, $item) {
+  function entityFindCandidate($entity, $entity_type, $distinction_key) {
     if (!isset($this->callback)) {
       // Restore the callback after serialization.
-      $this->callback = crumbs('callbackRestoration')->getRouteParentCallback($this->module, $this->key);
+      $this->callback = crumbs('callbackRestoration')->getEntityParentCallback($this->module, $this->key);
     }
     if (!empty($this->callback)) {
-      return call_user_func($this->callback, $path, $item);
+      return call_user_func($this->callback, $entity, $entity_type, $distinction_key);
     }
   }
 }
