@@ -9,6 +9,7 @@
  * @property array $rawBreadcrumbItems
  * @property bool $showCurrentPage
  * @property bool $trailingSeparator
+ * @property string $richSnippetMode
  * @property bool $showFrontPage
  * @property int $minTrailItems
  * @property string $separator
