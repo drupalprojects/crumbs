@@ -132,7 +132,7 @@ function crumbs_admin_display_form() {
     $separator_notes .= '<li>' . str_replace("\n", '<br/>', t($note)) . '</li>';
   }
   $separator_notes = '<ul>' . $separator_notes . '</ul>';
-  $separator_desc = '<p>' . t('A custom separator symbol, such as " &amp;raquo; " ( &raquo; ) or " &amp;gt; " (&gt).') . '</p>';
+  $separator_desc = '<p>' . t('A custom separator symbol, such as " &amp;raquo; " ( &raquo; ) or " &amp;gt; " ( &gt; ).') . '</p>';
   $form['separator_settings']['crumbs_separator'] = array(
     '#type' => 'textfield',
     '#title' => t('Custom separator HTML'),
