@@ -53,9 +53,22 @@ class crumbs_TrailFinder {
       $path = $parent_path;
     }
     unset($trail_reverse['<front>']);
+    // Only prepend a frontpage item, if the configured frontpage is valid.
     $front_menu_item = crumbs_get_router_item($front_normal_path);
-    $front_menu_item['href'] = '<front>';
-    $trail_reverse[$front_normal_path] = $front_menu_item;
+    if (isset($front_menu_item) || TRUE) {
+      $front_menu_item['href'] = '<front>';
+      $trail_reverse[$front_normal_path] = $front_menu_item;
+    }
+    else {
+      $message_raw = 'Your current setting for !site_frontpage seems to be invalid.';
+      $message_replacements = array(
+        '!site_frontpage' => '"' . l(t('Default front page'), 'admin/config/system/site-information') . '"',
+      );
+      watchdog('crumbs', $message_raw, $message_replacements);
+      if (user_access('administer site configuration')) {
+        drupal_set_message(t($message_raw, $message_replacements), 'warning');
+      }
+    }
     return array_reverse($trail_reverse);
   }
 }
