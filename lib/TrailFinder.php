@@ -40,8 +40,6 @@ class crumbs_TrailFinder {
     $path = $this->router->getNormalPath($path);
     $trail_reverse = array();
     $front_normal_path = $this->router->getFrontNormalPath();
-    $front_menu_item = $this->router->getRouterItem($front_normal_path);
-    $front_menu_item['href'] = '<front>';
     while (strlen($path) && $path !== '<front>' && $path !== $front_normal_path) {
       if (isset($trail_reverse[$path])) {
         // We found a loop! To prevent infinite recursion, we
@@ -73,6 +71,8 @@ class crumbs_TrailFinder {
       $path = $parent_path;
     }
     unset($trail_reverse['<front>']);
+    $front_menu_item = $this->router->getRouterItem($front_normal_path);
+    $front_menu_item['href'] = '<front>';
     $trail_reverse[$front_normal_path] = $front_menu_item;
 
     return array_reverse($trail_reverse);
