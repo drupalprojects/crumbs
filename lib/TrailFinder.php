@@ -49,6 +49,7 @@ class crumbs_TrailFinder {
         }
         break;
       }
+      /** @var array|null $item */
       $item = $this->router->getRouterItem($path);
       // If this menu item is a default local task and links to its parent,
       // skip it and start the search from the parent instead.
