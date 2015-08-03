@@ -11,7 +11,6 @@ function menu_crumbs_plugins($api) {
   $api->multiPlugin('link_title');
   $api->disabledByDefault('hierarchy.*');
   $api->disabledByDefault('link_title.*');
-  $api->routeMonoPlugin('crumbs/special-menu-item/%', 'specialItems');
 }
 
 
@@ -31,6 +30,13 @@ class menu_CrumbsMultiPlugin_hierarchy implements crumbs_MultiPlugin_FindParentI
    * {@inheritdoc}
    */
   function findParent($path, $item) {
+
+    // Support for special_menu_items module.
+    /* @see crumbs_menu() */
+    /* @see menu_link_load() */
+    if ('crumbs/special-menu-item/%' === $item['route']) {
+      return $this->specialMenuItemFindParent($item);
+    }
 
     $q = db_select('menu_links', 'parent');
     $q->innerJoin('menu_links', 'child', 'parent.mlid = child.plid');
@@ -70,6 +76,40 @@ class menu_CrumbsMultiPlugin_hierarchy implements crumbs_MultiPlugin_FindParentI
     }
     return $candidates;
   }
+
+  /**
+   * Finds the parent path for an artificial router item representing a special
+   * menu item with '<nolink>' path.
+   *
+   * @param array $item
+   *
+   * @return string[]
+   *   Parent path candidates (can't be more than one).
+   */
+  protected function specialMenuItemFindParent(array $item) {
+
+    if (empty($item['map'][2]['menu_name']) || empty($item['map'][2]['plid'])) {
+      return array();
+    }
+    $menu_name = $item['map'][2]['menu_name'];
+    $parent_link = menu_link_load($item['map'][2]['plid']);
+
+    if (empty($parent_link['link_path'])) {
+      return array();
+    }
+    $parent_path = $parent_link['link_path'];
+
+    if ('<separator>' === $parent_path) {
+      return array();
+    }
+
+    if ('<nolink>' === $parent_path) {
+      $parent_path = 'crumbs/special-menu-item/' . $parent_link['mlid'];
+    }
+
+    return array($menu_name => $parent_path);
+  }
+
 }
 
 
@@ -174,42 +214,4 @@ class menu_CrumbsMultiPlugin_link_title implements crumbs_MultiPlugin_FindTitleI
     }
     return $titles;
   }
-}
-
-class menu_CrumbsMonoPlugin_specialItems implements crumbs_MonoPlugin_FindParentInterface {
-
-  /**
-   * {@inheritdoc}
-   */
-  function describe($api) {
-    return 'Special menu items';
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  function findParent($path, $item) {
-
-    $menu_link = end($item['map']);
-    if (empty($menu_link) || !is_array($menu_link) || empty($menu_link['plid'])) {
-      return NULL;
-    }
-    $parent_link = menu_link_load($menu_link['plid']);
-
-    if (empty($parent_link['link_path'])) {
-      return NULL;
-    }
-
-    $parent_path = $parent_link['link_path'];
-    if ('<nolink>' === $parent_path) {
-      return 'crumbs/special-menu-item/' . $menu_link['plid'];
-    }
-
-    if ('<separator>' === $parent_path) {
-      return NULL;
-    }
-
-    return $parent_path;
-  }
-
 }
