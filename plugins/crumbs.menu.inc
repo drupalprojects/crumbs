@@ -30,7 +30,6 @@ class menu_CrumbsMultiPlugin_hierarchy implements crumbs_MultiPlugin_FindParentI
    * {@inheritdoc}
    */
   function findParent($path, $item) {
-
     // Support for special_menu_items module.
     /* @see crumbs_menu() */
     /* @see menu_link_load() */
@@ -38,10 +37,11 @@ class menu_CrumbsMultiPlugin_hierarchy implements crumbs_MultiPlugin_FindParentI
       return $this->specialMenuItemFindParent($item);
     }
 
-    $q = db_select('menu_links', 'parent');
-    $q->innerJoin('menu_links', 'child', 'parent.mlid = child.plid');
+    $q = db_select('menu_links', 'child');
+    // Join the parent item, but allow for toplevel items without a parent.
+    $q->leftJoin('menu_links', 'parent', 'parent.mlid = child.plid');
     $q->addExpression('parent.link_path', 'parent_path');
-    $q->addExpression('parent.menu_name', 'menu_name');
+    $q->addExpression('child.menu_name', 'menu_name');
     $q->addExpression('child.plid', 'plid');
     $q->condition('child.link_path', $path);
 
@@ -53,28 +53,32 @@ class menu_CrumbsMultiPlugin_hierarchy implements crumbs_MultiPlugin_FindParentI
       if (isset($GLOBALS['language'])) {
         $language = array($language, $GLOBALS['language']->language);
       }
-      $q->condition('parent.language', $language);
+      $q->condition('child.language', $language);
     }
 
     // Top-level links have higher priority.
-    $q->orderBy('parent.depth', 'ASC');
-
-    // Ignore separator menu items added by special_menu_items.
-    $q->condition('parent.link_path', array('<separator>'), 'NOT IN');
+    $q->orderBy('child.depth', 'ASC');
 
     // Collect candidates for the parent path, keyed by menu name.
     $candidates = array();
     foreach ($q->execute() as $row) {
-      if (!isset($candidates[$row->menu_name])) {
+      if (!array_key_exists($row->menu_name, $candidates)) {
+        if ('<separator>' === $row->parent_path) {
+          // Ignore separator menu items added by special_menu_items.
+          continue;
+        }
         if ('<nolink>' === $row->parent_path) {
           $candidates[$row->menu_name] = 'crumbs/special-menu-item/' . $row->plid;
         }
         else {
+          // This may add NULL values for toplevel items.
           $candidates[$row->menu_name] = $row->parent_path;
         }
       }
     }
-    return $candidates;
+
+    // Filter out NULL values for toplevel items.
+    return array_filter($candidates);
   }
 
   /**
