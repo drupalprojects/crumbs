@@ -2,5 +2,7 @@ name = Crumbs example
 description = Example module for Crumbs custom plugins.
 core = 7.x
 
+package = Example modules
+
 ; This allows to put our plugin classes into dedicated folders.
 dependencies[] = xautoload
