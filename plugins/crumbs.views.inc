@@ -127,6 +127,7 @@ class views_CrumbsMonoPlugin_PageTitle implements crumbs_MonoPlugin_FindTitleInt
       return NULL;
     }
 
+    // The first two arguments are view name and display id.
     $args = array_slice($item['page_arguments'], 2);
     if (empty($args)) {
       return $this->viewsPageTitle();
